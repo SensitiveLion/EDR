@@ -1,5 +1,4 @@
-#changelog 2/22 1:30 - updated objects.data code to hit tsv parser again, change output to writen file rather than array.
-require "pry"
+#require "pry"
 require "zip"
 require "optparse"
 require "csv"
@@ -97,7 +96,6 @@ else
                   entry.extract("#{@input}/#{@name}")
                   puts "Starting ShimCache Parser \n"
                   shim = `python ShimCacheParser.py -r #{@input}/#{@name} -o #{@output}/shimcache/#{@name}.csv`
-                  binding.pry
                   if /\[\+\] Writing output to/.match(shim)
                     puts "#{@name} created in #{@output}/shimcache directory \n"
                     @log << "#{@name} created in #{@output} directory \n"
@@ -152,7 +150,6 @@ else
                 @amcache_zips << [@input,@output,edr,@backup]
               end
             else
-              binding.pry
               missing = edr.gsub(/edr_data_/,"")
               missing.gsub!(/\{.*/,"")
               if missing.empty?
@@ -190,12 +187,12 @@ else
       end
     end
 
-    # system("ruby threading.rb")
+    system("ruby threading.rb")
 
-    # Dir["#{@input}/*.zip"].each do |file|
-    #   zip_name = file.gsub(/#{@input}\//,'')
-    #   File.rename("#{@input}/#{zip_name}", "#{@backup}/#{zip_name}")
-    # end
+    Dir["#{@input}/*.zip"].each do |file|
+      zip_name = file.gsub(/#{@input}\//,'')
+      File.rename("#{@input}/#{zip_name}", "#{@backup}/#{zip_name}")
+    end
 
     File.write('staging.txt', '')
 
