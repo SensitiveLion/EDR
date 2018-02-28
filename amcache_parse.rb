@@ -30,7 +30,7 @@ Zip::File.open("#{@input}/#{@zip}") do |zip_file|
 
   zip_file.glob('Amcache.hve') do |entry|
     @name = @zip.gsub(/edr_data_/,"")
-    @name.gsub!(/\{.*/,"")
+    @name.gsub!(/_?\{.*/,"")
     if @name.empty?
       @name = "NONAME#{@count}"
       @count += 1
@@ -42,10 +42,10 @@ Zip::File.open("#{@input}/#{@zip}") do |zip_file|
     amcache = `python amcache.py #{@input}/#{@name}_amcache`
 
     if amcache.empty?
-      puts "error with amcache parser for @name \n"
+      puts "error with amcache parser for #{@name} \n"
     else
       puts "Amcache parsed. Writing to #{@output}/amcache \n"
-      CSV.open("#{@output}/amcache/#{@name}_amache.csv", "w") do |csv|
+      CSV.open("#{@output}/amcache/#{@name}_amcache.csv", "w") do |csv|
         amcache.each_line do |l|
           l.chomp!
           csv << l.split("|")
